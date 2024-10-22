@@ -1,56 +1,51 @@
-from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import traceback  # For detailed error reporting
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from flask import Flask, request, render_template, jsonify
+import logging
+import sys
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load the dataset
+try:
+    df = pd.read_excel('dataset.xlsx')
+    logging.info(f"Dataset loaded successfully. Shape: {df.shape}")
+    logging.info(f"Columns: {df.columns.tolist()}")
+    logging.info(f"First few rows: \n{df.head()}")
+except Exception as e:
+    logging.error(f"Error loading dataset: {str(e)}")
+    sys.exit(1)
+
+# Create the machine learning model
+try:
+    model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+    model.fit(df['Student Query'], df['Answer'])
+    logging.info("Model trained successfully")
+except Exception as e:
+    logging.error(f"Error training model: {str(e)}")
+    sys.exit(1)
+
+# Create Flask app
 app = Flask(__name__)
 
-# Load dataset from Excel file
-data = pd.read_excel('dataset.xlsx')
+@app.route('/')
+def home():
+    return render_template('index.html')
 
-# Ensure the columns are named correctly
-data.columns = ['Query_Id', 'Student_Query', 'Intent_Label', 'Answer']  # Correct capitalization here
-
-# Remove leading/trailing spaces in student queries
-data['Student_Query'] = data['Student_Query'].str.strip()
-
-# Vectorize the student queries
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(data['Student_Query'])
-print(f"TF-IDF Matrix Shape: {tfidf_matrix.shape}")  # Check the shape of the TF-IDF matrix
-
-@app.route('/ask', methods=['POST'])
-def ask():
+@app.route('/query', methods=['POST'])
+def query():
     try:
-        user_input = request.json['question'].strip()  # Strip spaces from user input
-        print(f"User Input: {user_input}")  # Print user input for debugging
-
-        # Print dataset for verification
-        print(f"Dataset: {data.head()}")  # Print first few rows of the dataset
-
-        # Vectorize the user input
-        user_input_vectorized = vectorizer.transform([user_input])
-
-        # Compute similarities
-        similarities = cosine_similarity(user_input_vectorized, tfidf_matrix)
-
-        # Print similarities for debugging
-        print(f"Similarities: {similarities}")
-
-        # Find the index of the most similar query
-        index = similarities.argsort()[0][-1]
-
-        # Print the index and answer
-        print(f"Index: {index}")
-        answer = data['Answer'].iloc[index]
-        print(f"Bot Answer: {answer}")
-
-        return jsonify({'answer': answer})
+        user_query = request.form['query']
+        logging.info(f"Received query: {user_query}")
+        response = model.predict([user_query])[0]
+        logging.info(f"Model response: {response}")
+        return jsonify({'response': response})
     except Exception as e:
-        print(f"Error: {e}")  # Print the error for debugging
-        return jsonify({'answer': 'Sorry, something went wrong.'})
-
+        logging.error(f"Error processing query: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
