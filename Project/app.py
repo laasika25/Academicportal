@@ -1,10 +1,9 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import NearestNeighbors
 from flask import Flask, request, render_template, jsonify
 import logging
-import numpy as np
+import traceback
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -81,7 +80,8 @@ def query():
     
     except Exception as e:
         logging.error(f"Error processing query: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        logging.error(traceback.format_exc())
+        return jsonify({'error': 'An error occurred while processing your request. Please try again.'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
