@@ -1,10 +1,10 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import NearestNeighbors
 from flask import Flask, request, render_template, jsonify
 import logging
-import sys
+import numpy as np
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,19 +14,40 @@ try:
     df = pd.read_excel('dataset.xlsx')
     logging.info(f"Dataset loaded successfully. Shape: {df.shape}")
     logging.info(f"Columns: {df.columns.tolist()}")
-    logging.info(f"First few rows: \n{df.head()}")
+    
+    # Check for required columns
+    if 'Student Query' not in df.columns or 'Answer' not in df.columns:
+        logging.error("Missing 'Student Query' or 'Answer' columns in dataset.")
+        raise ValueError("Dataset must contain 'Student Query' and 'Answer' columns.")
+    
+    # Check for missing data
+    if df['Student Query'].isnull().any() or df['Answer'].isnull().any():
+        logging.error("Missing values in 'Student Query' or 'Answer' columns.")
+        raise ValueError("There are missing values in the dataset.")
+    
 except Exception as e:
     logging.error(f"Error loading dataset: {str(e)}")
-    sys.exit(1)
+    raise
 
-# Create the machine learning model
+# Preprocessing
 try:
-    model = make_pipeline(TfidfVectorizer(), MultinomialNB())
-    model.fit(df['Student Query'], df['Answer'])
-    logging.info("Model trained successfully")
+    # Ensure all data is string type
+    df['Student Query'] = df['Student Query'].astype(str)
+    df['Answer'] = df['Answer'].astype(str)
+    
+    # Vectorizing text data using TF-IDF
+    vectorizer = TfidfVectorizer()
+    tfidf_matrix = vectorizer.fit_transform(df['Student Query'])
+    
+    # Create a Nearest Neighbors model
+    nn_model = NearestNeighbors(n_neighbors=1, metric='cosine')
+    nn_model.fit(tfidf_matrix)
+    
+    logging.info("Preprocessing and model creation completed successfully.")
+
 except Exception as e:
-    logging.error(f"Error training model: {str(e)}")
-    sys.exit(1)
+    logging.error(f"Error during preprocessing: {str(e)}")
+    raise
 
 # Create Flask app
 app = Flask(__name__)
@@ -40,9 +61,24 @@ def query():
     try:
         user_query = request.form['query']
         logging.info(f"Received query: {user_query}")
-        response = model.predict([user_query])[0]
-        logging.info(f"Model response: {response}")
-        return jsonify({'response': response})
+        
+        if not user_query:
+            logging.error("Empty query received.")
+            return jsonify({'error': 'Empty query received'}), 400
+        
+        # Vectorize the user query
+        user_query_tfidf = vectorizer.transform([user_query])
+        
+        # Find the nearest neighbor
+        distances, indices = nn_model.kneighbors(user_query_tfidf)
+        
+        # Get the answer for the nearest neighbor
+        nearest_query_index = indices[0][0]
+        answer = df.iloc[nearest_query_index]['Answer']
+        
+        logging.info(f"Found answer: {answer}")
+        return jsonify({'response': answer})
+    
     except Exception as e:
         logging.error(f"Error processing query: {str(e)}")
         return jsonify({'error': str(e)}), 500

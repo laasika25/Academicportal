@@ -6,7 +6,7 @@
     <title>Academic Chatbot</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,15 +16,30 @@
         }
         .chat-container {
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 80%;
+            width: 90%;
             max-width: 500px;
+        }
+        .chatbot-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .chatbot-icon img {
+            width: 80px;
+            height: 80px;
+        }
+        .greeting {
+            text-align: center;
+            font-size: 1.2em;
+            color: #003366;
+            margin-bottom: 20px;
         }
         h1 {
             text-align: center;
             color: #003366;
+            margin-bottom: 20px;
         }
         #chatForm {
             display: flex;
@@ -32,36 +47,57 @@
         }
         #query {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px 0 0 4px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #query:focus {
+            outline: none;
+            border-color: #cc0000;
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #cc0000;
             color: white;
             border: none;
-            border-radius: 0 4px 4px 0;
+            border-radius: 0 8px 8px 0;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #990000;
         }
         #response {
             background-color: #e6f3ff;
-            border-radius: 4px;
-            padding: 10px;
+            border-radius: 8px;
+            padding: 15px;
             margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.5;
         }
         .error {
             color: #cc0000;
             font-weight: bold;
         }
+        .typing {
+            font-style: italic;
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
+        <div class="chatbot-icon">
+            <img src="https://klh.edu.in/wp-content/uploads/2020/06/Lg.png" alt="Chatbot Icon">
+        </div>
+        <div class="greeting">Hi, how can I help you?</div>
         <h1>Academic Chatbot</h1>
         <form id="chatForm">
             <input type="text" id="query" placeholder="Ask a question..." required>
-            <button type="submit">Submit</button>
+            <button type="submit">Ask</button>
         </form>
         <div id="response"></div>
     </div>
@@ -71,7 +107,7 @@
             e.preventDefault();
             var query = document.getElementById('query').value;
             var responseDiv = document.getElementById('response');
-            responseDiv.innerHTML = 'Processing...';
+            responseDiv.innerHTML = '<span class="typing">Thinking...</span>';
             fetch('/query', {
                 method: 'POST',
                 headers: {
@@ -89,7 +125,7 @@
             })
             .catch((error) => {
                 console.error('Error:', error);
-                responseDiv.innerHTML = '<span class="error">Sorry, there was an error processing your request. Please check the server logs for more information.</span>';
+                responseDiv.innerHTML = '<span class="error">Sorry, there was an error processing your request. Please try again later.</span>';
             });
         });
     </script>
