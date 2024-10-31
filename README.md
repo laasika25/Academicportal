@@ -35,5 +35,5 @@ The "ML Model for Academic Purposes" is designed to enhance student support by a
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/ML-Model-for-Academic-Purposes.git
+   git clone https://github.com/gyerra/ML-Model-for-Academic-Purposes.git
    cd ML-Model-for-Academic-Purposes
