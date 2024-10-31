@@ -37,10 +37,13 @@ The **ML Model for Academic Purposes** chatbot is designed to provide real-time 
    ```bash
    git clone https://github.com/gyerra/AIML-PROJECT-2320040080.git
    cd AIML-PROJECT-2320040080
+
 2.**Install dependencies**
   pip install -r requirements.txt
+
 3.**Dataset**
 Place dataset.xlsx in the root directory
+
 4.**Run the app**
   python app.py
 _Open the chatbot at http://127.0.0.1:5000/ in your browser._
