@@ -62,17 +62,6 @@ Sentence-Transformers: For Sentence-BERT embeddings.
 Flask: Web app framework.
 HTML/CSS: Frontend development.
 
-**📁 Project Structure**
-AIML-PROJECT-2320040080/
-├── app.py                  # Main Flask app
-├── dataset.xlsx            # Dataset with queries and answers
-├── templates/
-│   └── index.html          # HTML file for chatbot UI
-├── static/
-│   └── style.css           # UI styling
-├── README.md               # Project documentation
-└── requirements.txt        # List of required libraries
-
 🔮 Future Work
 Improve Accuracy: Test other models to enhance response accuracy.
 New Features: Add voice input, multilingual support, etc.
