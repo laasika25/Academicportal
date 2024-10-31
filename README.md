@@ -67,6 +67,6 @@ Improve Accuracy: Test other models to enhance response accuracy.
 New Features: Add voice input, multilingual support, etc.
 Deployment: Make the chatbot publicly accessible for educational use.
 
-📜** License**
+**📜License**
 Licensed under the MIT License. See the LICENSE file for details.
 
