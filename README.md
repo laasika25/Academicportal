@@ -37,3 +37,50 @@ The **ML Model for Academic Purposes** chatbot is designed to provide real-time 
    ```bash
    git clone https://github.com/gyerra/AIML-PROJECT-2320040080.git
    cd AIML-PROJECT-2320040080
+Install dependencies
+
+bash
+Copy code
+pip install -r requirements.txt
+Add your dataset
+
+Place dataset.xlsx in the root directory, with columns: Student Query and Answer.
+Run the app
+
+bash
+Copy code
+python app.py
+Open the chatbot at http://127.0.0.1:5000/ in your browser.
+
+🚀 Usage
+Type your question in the chatbot's input field.
+Hit "Ask" to get your answer.
+View the response, or error if no match was found.
+📐 Model and Methodology
+Sentence-BERT (all-MiniLM-L6-v2): Embeds student queries and compares them with each question in the dataset.
+Cosine Similarity: Measures similarity between the user query and dataset queries to find the best answer.
+Flask Backend: Routes user queries to the model and returns the results.
+💻 Technologies Used
+Python: Core programming language.
+Pandas: Data processing.
+Sentence-Transformers: For Sentence-BERT embeddings.
+Flask: Web app framework.
+HTML/CSS: Frontend development.
+📁 Project Structure
+php
+Copy code
+AIML-PROJECT-2320040080/
+├── app.py                  # Main Flask app
+├── dataset.xlsx            # Dataset with queries and answers
+├── templates/
+│   └── index.html          # HTML file for chatbot UI
+├── static/
+│   └── style.css           # UI styling
+├── README.md               # Project documentation
+└── requirements.txt        # List of required libraries
+🔮 Future Work
+Improve Accuracy: Test other models to enhance response accuracy.
+New Features: Add voice input, multilingual support, etc.
+Deployment: Make the chatbot publicly accessible for educational use.
+📜 License
+Licensed under the MIT License. See the LICENSE file for details.
