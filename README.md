@@ -25,6 +25,9 @@ The **ML Model for Academic Purposes** chatbot is designed to provide real-time 
 - **User-Friendly UI**: Responsive web interface with Flask and HTML/CSS.
 - **Error Handling**: Friendly messages when something goes wrong.
 
+- ![image](https://github.com/user-attachments/assets/b7b962cb-f99b-4400-ba73-7353bbeb3c92)
+
+
 ## ⚙️ Installation
 
 ### Prerequisites
